@@ -47,7 +47,7 @@ var application = new Vue({
     },
     created: function () {
         console.log("Ciao")
-        axios.get("http://localhost:8080/api/comuni/names")
+        axios.get("https://travellos.herokuapp.com/api/comuni/names")
             //.then(response => (this.items = response))
             .then(function (response) {                
                 application.states = response.data
@@ -127,7 +127,7 @@ var application = new Vue({
                 minZoom: 9,
                 maxZoom: 18,
                 id: 'mapbox.streets',
-                accessToken: 'pk.eyJ1Ijoic2VidGhldHJhbXAiLCJhIjoiY2pscXpqMTIzMHFtdjNwcGxnNWl3NHV1MiJ9.9eZSKexjBV2RdXorrwyBzg'
+                accessToken: 'pk.eyJ1Ijoic2VidGhldHJhbXAiLCJhIjoiY2tiOWw3OHprMGZjZTMxanBncng1NjltbSJ9.LxBvYETwF-pPSqoGGq3ltw'
             }).addTo(this.map);
             this.addMarker([46.064276, 11.124129])
             //this.setView([46.064276, 11.124129])          
