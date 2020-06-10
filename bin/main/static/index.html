@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-139164354-1');
+    </script>
+    <link rel="icon" type="image/png" sizes="32x32" href="../web/images/favicon-32x32.png">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+        integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+        integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+        crossorigin=""></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <link href='web/style.css' rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <div id="app" style="text-align:center">
+        <v-app>
+            <v-layout>
+                <v-flex md7 v-if="!small">
+                    <div class="container">
+                        <v-img
+                            src="https://firebasestorage.googleapis.com/v0/b/idea-n83.appspot.com/o/1.png?alt=media&token=df275980-5e2a-4503-bbb3-6eb58cba0605">
+                        </v-img>
+                        <v-toolbar color="green lighten-1">
+                            <v-btn v-on:click="toggle('impostazioni')" icon>
+                                <v-icon>{{button.icon}}</v-icon>
+                            </v-btn>
+                            <v-toolbar-title>Search: </v-toolbar-title>
+                            <v-autocomplete :loading="loading" :items="items" :search-input.sync="search"
+                                v-model="select" cache-items class="mx-3" flat hide-no-data hide-details
+                                label="Where do you want to stay?" solo-inverted></v-autocomplete>
+                            <v-btn icon>
+                                <v-icon v-on:click="get_data_spring()">search</v-icon>
+                            </v-btn>
+                        </v-toolbar>
+                    </div>
+
+                    <div class="imgTraveller" v-if="!small && show">
+                        <h2>Find your next adventure</h2>
+                        <img src="https://image.flaticon.com/icons/svg/925/925642.svg">
+                    </div>
+
+                    <!--Results-->
+                    <div>
+                        <v-container v-for="(item, index) in dataServer" :key="item.id">
+                            <v-layout>
+                                <v-flex md1></v-flex>
+                                <v-flex md10>
+                                    <v-card>
+                                        <v-toolbar color="green lighten" v-on:click="openDetail(item.hotelId)">
+                                            <v-toolbar-title>HOTEL {{item.nome}}</v-toolbar-title>
+                                            <v-spacer></v-spacer>
+                                            <v-rating color="secondary" full-icon="" background-color="yellow"
+                                                empty-icon="$vuetify.icons.ratingFull" readonly v-model="5-item.stelle">
+                                            </v-rating>
+                                        </v-toolbar>
+                                        <v-img :src="getUrlImage(item.photoUrl)"
+                                            aspect-ratio="2.75" v-on:click="openDetail(item.hotelId)"></v-img>
+                                        <v-container fill-height fluid>
+                                            <v-layout fill-height>
+                                                <v-flex xs12 align-end flexbox>
+                                                    <v-layout row wrap>
+                                                        <v-flex md12>
+                                                            <h2 class="headline">{{item.indirizzo}},
+                                                                {{item.nomeLocalita.nomeLocalita}}</h2>
+                                                        </v-flex>
+                                                        <v-flex md12>
+                                                    </v-layout>
+                                                </v-flex>
+                                            </v-layout>
+                                        </v-container>
+                                        <v-card-actions>
+                                            <v-layout>
+                                                <v-flex md5>
+                                                    <v-btn flat color="green" v-on:click="openDetail(item.hotelId)">
+                                                        Dettagli
+                                                    </v-btn>
+                                                </v-flex>
+                                                <v-flex md5>
+                                                    <div class="destra">
+                                                        <v-btn flat color="green" v-on:click="openSite(item.website)">Go
+                                                            to
+                                                            website</v-btn>
+                                                    </div>
+                                                </v-flex>
+                                                <v-flex md1>
+                                                    <v-btn fab small color="pink" outline
+                                                        v-on:click="addLike(index)">
+                                                        <v-icon >favorite</v-icon>
+                                                    </v-btn>
+                                                </v-flex>
+                                                <v-flex md1>
+                                                    <v-card-text><span class="like"> {{item.like}}</span>
+                                                    </v-card-text>
+                                                </v-flex>
+                                            </v-layout>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-flex>
+                                <v-flex md1></v-flex>
+                            </v-layout>
+                        </v-container>
+                    </div>
+                </v-flex>
+
+                <!--Small-->
+                <v-flex xs12 md5 v-if="small">
+                    <div style="background-color: rgb(102, 187, 106)">
+                        <v-img
+                            src="https://firebasestorage.googleapis.com/v0/b/idea-n83.appspot.com/o/1.png?alt=media&token=df275980-5e2a-4503-bbb3-6eb58cba0605">
+                        </v-img>
+                        <v-toolbar  color="green lighten-1"
+                            style="z-index: 4; box-shadow: none; box-shadow: 0 2px 4px -1px rgba(0,0,0,.2) ">
+                            <v-autocomplete :loading="loading" :items="items" :search-input.sync="search"
+                                v-model="select" flat hide-no-data hide-details label="Where do you want to stay?"
+                                solo-inverted></v-autocomplete>
+                            <v-btn icon>
+                                <v-icon v-on:click="get_data_spring()">search</v-icon>
+                            </v-btn>
+                        </v-toolbar>
+                    </div>
+                    <!--Results-->
+                    <div>
+                        <v-container v-for="(item, index) in dataServer" :key="item.id">
+                            <v-layout>
+                                <v-flex md12>
+                                    <v-card>
+                                        <v-toolbar  color="green lighten" v-on:click="openDetail(item.hotelId)">
+                                            <h4>HOTEL {{item.nome}}</h4>
+                                            <v-spacer></v-spacer>
+                                            <v-rating dense size="20" background-color="yellow" full-icon=""
+                                                empty-icon="$vuetify.icons.ratingFull" readonly v-model="5-item.stelle">
+                                            </v-rating>
+                                        </v-toolbar>
+                                        <v-img :src="getUrlImage(item.photoUrl)"
+                                            aspect-ratio="2.75" v-on:click="openDetail(item.hotelId)"></v-img>
+                                        <v-container fill-height fluid>
+                                            <v-layout fill-height>
+                                                <v-flex xs12 align-end flexbox>
+                                                    <v-layout row wrap>
+                                                        <v-flex md12>
+                                                            <h4>{{item.indirizzo}},
+                                                                {{item.nomeLocalita.nomeLocalita}}</h4>
+                                                        </v-flex>
+                                                        <v-flex md12>
+                                                    </v-layout>
+                                                </v-flex>
+                                            </v-layout>
+                                        </v-container>
+                                        <v-card-actions>
+                                            <v-layout>
+                                                <v-flex md5>
+                                                    <v-btn flat color="green" v-on:click="openDetail(item.hotelId)">
+                                                        Dettagli
+                                                    </v-btn>
+                                                </v-flex>
+                                                <v-flex md5>
+                                                    <div class="destra">
+                                                        <v-btn flat color="green" v-on:click="openSite(item.website)">Go
+                                                            to website</v-btn>
+                                                    </div>
+                                                </v-flex>
+                                            </v-layout>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-flex>
+                            </v-layout>
+                        </v-container>
+                    </div>
+                </v-flex>
+                <v-flex md5 v-if="!small">
+                    <div id="mapid"></div>
+                </v-flex>
+            </v-layout>
+            <div class="imgTraveller" v-if="small && show">
+                <h1>Find your next adventure</h1>
+                <img src="https://image.flaticon.com/icons/svg/925/925642.svg">
+            </div>
+        </v-app>
+    </div>
+
+    <!--script space-->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+    <script src="web/script.js"></script>
+    <!--<script src="scriptMap.js"></script>-->
+</body>
+
+</html>
+
+<!--view-source:https://cdnmks.suggesto.eu/web/vtn/h?p_p_id=articledetailOneInstance_WAR_suggestoguiportlet&p_p_lifecycle=2&p_p_resource_id=asXml&_articledetailOneInstance_WAR_suggestoguiportlet_jwcfg={%22c%22:%22winingdininglist%22,%22lng%22:%22it%22,%22p1%22:%22%22,%22p2%22:%22%22,%22p3%22:%22%22,%22p4%22:%22%22,%22p5%22:%22%22,%22dE%22:%22%22,%22nn%22:%225000%22,%22sk%22:0,%22so%22:%22%22,%22dbg%22:%22F%22,%22oW%22:%22100%25%22,%22oH%22:%22500px%22,%22border%22:%22none%22,%22oS%22:%22T%22,%22oSL%22:%22T%22,%22oSB%22:%22T%22,%22oSF%22:%22T%22,%22sBC%22:%22rgb(35,%2082,%20124)%22,%22sTH%22:%22rgb(255,%20255,%20255)%22,%22sBCC%22:%22rgb(255,%20255,%20255)%22,%22sTCC%22:%22rgb(51,%2051,%2051)%22,%22sTTC%22:%22rgb(51,%2051,%2051)%22,%22sTLC%22:%22%2523003B8B%22,%22css%22:%22T%22,%22logo%22:%22w%22,%22ts%22:1559466606344}-->

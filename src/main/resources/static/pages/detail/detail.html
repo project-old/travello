@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-139164354-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-139164354-1');
+    </script>
+    <link rel="icon" type="image/png" sizes="32x32" href="../web/images/favicon-32x32.png">
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css"
+        integrity="sha512-puBpdR0798OZvTTbP4A8Ix/l+A4dHDD0DGqYW6RQ+9jxkRFclaxxQb/SJAWZfWAkuyeQUytO7+7N4QKrDh+drA=="
+        crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"
+        integrity="sha512-QVftwZFqvtRNi0ZyCtsznlKSWOStnDORoefr1enyq5mVL4tmKB3S/EnC3rRJcxCPavG10IcrVGSmPh6Qw5lwrg=="
+        crossorigin=""></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.min.css" rel="stylesheet">
+    <link href='../../web/style.css' rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="detail.css">
+</head>
+
+<body>
+    <div id="app" style="text-align:center">
+        <v-app>
+            <v-layout>
+                <v-flex xs0 md 2>
+
+                </v-flex>
+                <v-flex xs12 md8 class="top">
+                    <div class="title">
+                        <h1>HOTEL {{hotel.attivita.nome}}</h1>
+                    </div>
+                    <v-img :src="getUrlImage(hotel.attivita.photoUrl)" width="100%"></v-img>
+                    <v-container>
+                        <div class="dettagli">
+                            <v-rating color="secondary" background-color="yellow" full-icon=""
+                                empty-icon="$vuetify.icons.ratingFull" readonly v-model="5-hotel.attivita.stelle">
+                            </v-rating>
+                            <br />
+                            <h3>Prezzi</h3>
+                            <hr>
+                            <v-list style="color:white;background-color: rgb(102, 187, 106);">
+                                <v-list-tile v-for="item in hotel.affitti" :key="item.prezzo">
+                                    <v-list-tile-content style="text-align: center">
+                                        <v-list-tile-title>{{item.camera.tipologia}}</v-list-tile-title>
+                                        <h4>{{item.prezzo}} €</h4>
+                                    </v-list-tile-content>
+                                </v-list-tile>
+                            </v-list>
+                            <h3>Servizi</h3>
+                            <hr>
+                            <v-list style="color:white;background-color: rgb(102, 187, 106);">
+                                <v-list-tile v-for="item in hotel.servizi" :key="item.prezzo">
+                                    <v-list-tile-content style="text-align: center">
+                                        <v-list-tile-title>{{item.servizio.descrizione}}</v-list-tile-title>
+                                    </v-list-tile-content>
+                                </v-list-tile>
+                            </v-list>
+                            <div class="servizi">
+
+                            </div>
+                        </div>
+                    </v-container>
+                    <div id="mapid"></div>
+                </v-flex>
+                <v-flex xs0 md2>
+                </v-flex>
+            </v-layout>
+        </v-app>
+    </div>
+
+    <!--script space-->
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vuetify/dist/vuetify.js"></script>
+    <script src="detail.js"></script>
+    <!--<script src="scriptMap.js"></script>-->
+</body>
+
+</html>
+
+<!--view-source:https://cdnmks.suggesto.eu/web/vtn/h?p_p_id=articledetailOneInstance_WAR_suggestoguiportlet&p_p_lifecycle=2&p_p_resource_id=asXml&_articledetailOneInstance_WAR_suggestoguiportlet_jwcfg={%22c%22:%22winingdininglist%22,%22lng%22:%22it%22,%22p1%22:%22%22,%22p2%22:%22%22,%22p3%22:%22%22,%22p4%22:%22%22,%22p5%22:%22%22,%22dE%22:%22%22,%22nn%22:%225000%22,%22sk%22:0,%22so%22:%22%22,%22dbg%22:%22F%22,%22oW%22:%22100%25%22,%22oH%22:%22500px%22,%22border%22:%22none%22,%22oS%22:%22T%22,%22oSL%22:%22T%22,%22oSB%22:%22T%22,%22oSF%22:%22T%22,%22sBC%22:%22rgb(35,%2082,%20124)%22,%22sTH%22:%22rgb(255,%20255,%20255)%22,%22sBCC%22:%22rgb(255,%20255,%20255)%22,%22sTCC%22:%22rgb(51,%2051,%2051)%22,%22sTTC%22:%22rgb(51,%2051,%2051)%22,%22sTLC%22:%22%2523003B8B%22,%22css%22:%22T%22,%22logo%22:%22w%22,%22ts%22:1559466606344}-->
